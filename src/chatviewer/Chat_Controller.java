@@ -1,7 +1,6 @@
 package chatviewer;
 
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -13,8 +12,9 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import chatviewer.Error_Handler.FileReadException;
+import chatviewer.Error_Handler.ParseException;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class Chat_Controller {
@@ -74,8 +74,9 @@ public class Chat_Controller {
             for (Message msg : messages) {
                 displayMessage(msg);
             }
-        } catch (IOException e) {
+        } catch (FileReadException | ParseException e) {
             fileLabel.setText("Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -111,4 +112,6 @@ public class Chat_Controller {
     public BorderPane getRoot() {
         return root;
     }
+
 }
+

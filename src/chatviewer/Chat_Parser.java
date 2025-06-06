@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static chatviewer.Error_Handler.*;
+
 public class Chat_Parser {
 
-    public static List<Message> parse(File file) throws IOException {
+    public static List<Message> parse(File file) throws FileReadException, ParseException {
         List<Message> messages = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -29,14 +31,19 @@ public class Chat_Parser {
                     content = line.substring(8).trim();
                     if (timestamp != null && nickname != null) {
                         messages.add(new Message(timestamp, nickname, content));
-                        // Reset for next message
                         timestamp = null;
                         nickname = null;
                         content = null;
+                    } else {
+                        throw new ParseException("Missing timestamp or nickname before message line.");
                     }
                 }
-                // Skip empty lines between messages
             }
+
+        } catch (IOException e) {
+            throw new FileReadException("Failed to read file: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ParseException("Unexpected parsing error: " + e.getMessage(), e);
         }
 
         return messages;
